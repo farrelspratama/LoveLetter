@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Love Letter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#241029; --lining:#8c3558; --dusk:#3d1a3f; --rose:#d98ca3; --rose-deep:#b86280;
+  --seal:#9c1c33; --seal-hi:#c9304c; --paper:#fff7f1; --ink:#4a2336; --line:#ecd3d3;
+  color-scheme: dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{
+  background:radial-gradient(120% 90% at 50% 10%,var(--dusk),var(--night) 70%);
+  color:#f6dfe6;font-family:"Cormorant Garamond",Georgia,serif;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.heart{position:absolute;color:var(--rose);line-height:1;opacity:0;will-change:transform,opacity;animation:heartpop var(--d,3.2s) cubic-bezier(.22,.8,.3,1) forwards}
+@keyframes heartpop{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+  18%{transform:translate(-50%,-50%) scale(1.15);opacity:.7}
+  30%{transform:translate(-50%,-50%) scale(1);opacity:.6}
+  82%{transform:translate(-50%,calc(-50% - 40px)) scale(1.05);opacity:.6}
+  92%{transform:translate(-50%,calc(-50% - 46px)) scale(1.5);opacity:.8}
+  100%{transform:translate(-50%,calc(-50% - 48px)) scale(2);opacity:0}
+}
+.spark{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--rose);opacity:0;will-change:transform,opacity;animation:spark .7s ease-out forwards}
+@keyframes spark{0%{transform:translate(-50%,-50%) scale(1);opacity:.9}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(0);opacity:0}}
+
+/* Ledakan hati saat surat diklik */
+.boom{position:fixed;inset:0;z-index:20;pointer-events:none;overflow:hidden}
+.bh{position:absolute;line-height:1;will-change:transform,opacity;animation:boom var(--t,1.6s) cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes boom{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:1}
+  55%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.1) rotate(var(--r));opacity:1}
+  100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y) + var(--fall))) scale(.7) rotate(var(--r));opacity:0}
+}
+.ring{position:absolute;width:20px;height:20px;border-radius:50%;border:3px solid #ffd1dc;opacity:.9;animation:ring .75s ease-out forwards}
+@keyframes ring{from{transform:translate(-50%,-50%) scale(0)}to{transform:translate(-50%,-50%) scale(18);opacity:0}}
+.bigheart{position:absolute;font-size:90px;line-height:1;color:#ff5d8f;animation:bigpop .9s ease-out forwards}
+@keyframes bigpop{0%{transform:translate(-50%,-50%) scale(0);opacity:0}30%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-50%) scale(2.8);opacity:0}}
+
+main{position:relative;z-index:1;text-align:center;padding:24px}
+h1{font-family:"Pinyon Script","Cormorant Garamond",cursive;font-weight:400;font-size:clamp(2.4rem,9vw,3.6rem);margin:0 0 6.5rem;letter-spacing:.01em}
+.hint{margin:3.2rem 0 0;font-style:italic;font-size:1.15rem;color:#e7bccb;min-height:1.6em;transition:opacity .4s}
+
+/* Amplop */
+.scene{perspective:900px;display:inline-block}
+.envelope{position:relative;width:min(84vw,340px);aspect-ratio:34/22;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.envelope:focus-visible{outline:2px solid var(--rose);outline-offset:10px;border-radius:6px}
+.back{position:absolute;inset:0;border-radius:6px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 20s-7-4.2-7-8.8A3.8 3.8 0 0 1 13 9a3.8 3.8 0 0 1 7 2.2C20 15.8 13 20 13 20z' fill='white' fill-opacity='.13'/%3E%3C/svg%3E"),linear-gradient(180deg,#6e2646,var(--lining));
+  box-shadow:0 24px 50px rgba(0,0,0,.45),inset 0 14px 24px rgba(0,0,0,.28)}
+.letter {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 5%;
+  height: 88%;
+  z-index: 2;
+
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 16px 18px;
+  color: var(--ink);
+  text-align: left;
+
+  background-image: repeating-linear-gradient(
+    transparent 0 25px,
+    var(--line) 25px 26px
+  );
+
+  background-position: 0 34px;
+
+  transform: translateY(0);
+  transition: transform 0.8s cubic-bezier(.25,.8,.25,1);
+}
+.letter b{font-family:"Caveat",cursive;font-size:1.35rem;font-weight:600;display:block;background:var(--paper);margin:-4px -4px 0;padding:0 4px}
+.pocket{
+  position:absolute;inset:-.5px;z-index:3;border-radius:6px;
+  background:linear-gradient(160deg,var(--rose),var(--rose-deep));
+  clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);
+}
+.flap{
+  position:absolute;left:0;right:0;top:0;height:58%;transform-origin:top;
+  clip-path:polygon(0 0,100% 0,50% 100%);will-change:transform;
+}
+/* sisi luar penutup */
+.flap.out{z-index:4;background:linear-gradient(180deg,#e8a1b6,var(--rose));
+  transform:perspective(700px) rotateX(0deg);transition:transform .4s ease-out .83s}
+/* sisi dalam penutup (motif hati) */
+.flap.in{z-index:1;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg transform='translate(0 26) scale(1 -1)'%3E%3Cpath d='M13 20s-7-4.2-7-8.8A3.8 3.8 0 0 1 13 9a3.8 3.8 0 0 1 7 2.2C20 15.8 13 20 13 20z' fill='white' fill-opacity='.13'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(180deg,#6e2646,var(--lining));
+  transform:perspective(700px) rotateX(90deg);transition:transform .35s ease-in .5s}
+.seal{
+  position:absolute;left:50%;top:58%;z-index:5;width:54px;height:54px;margin:-27px 0 0 -27px;border:0;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,var(--seal-hi),var(--seal) 70%);
+  box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 0 0 4px rgba(255,255,255,.12);
+  color:#ffd7de;font-size:1.5rem;line-height:54px;padding:0;cursor:pointer;
+  animation:beat 1.8s ease-in-out infinite;transition:opacity .4s 1.3s,scale .4s 1.3s;
+}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+.envelope.open .flap.out{transform:perspective(700px) rotateX(90deg);transition:transform .35s ease-in}
+.envelope.open .flap.in{transform:perspective(700px) rotateX(180deg);transition:transform .45s ease-out .33s}
+.envelope.open .seal{opacity:0;scale:.4;pointer-events:none;animation:none;transition:opacity .3s,scale .3s}
+.envelope.open .letter {
+  transform: translateY(-62%);
+  transition-delay: 0.6s;
+}
+.envelope.ready .letter{cursor:pointer}
+
+/* Surat terbuka */
+.reader{
+  position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(25,8,30,.72);backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .5s,visibility 0s .5s;
+}
+.reader.show{opacity:1;visibility:visible;transition:opacity .5s}
+.paper{
+  width:min(100%,520px);max-height:86vh;overflow:auto;background:var(--paper);color:var(--ink);
+  border-radius:6px;padding:34px 30px 26px;box-shadow:0 30px 70px rgba(0,0,0,.5);
+  transform:translateY(60px) rotate(-1.5deg) scale(.92);transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.reader.show .paper{transform:none}
+.paper h2{font-family:"Pinyon Script",cursive;font-weight:400;font-size:2.2rem;margin:0 0 14px}
+.paper p{font-family:"Caveat",cursive;font-weight:500;font-size:1.45rem;line-height:1.55;margin:0 0 12px;opacity:0}
+.reader.show .paper p,.reader.show .paper .sign{animation:fade .9s ease forwards;animation-delay:calc(var(--i)*.85s + .6s)}
+.paper .sign{font-family:"Pinyon Script",cursive;font-size:1.9rem;margin:18px 0 0;text-align:right;opacity:0}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.close{
+  display:block;margin:22px auto 0;padding:10px 22px;border:1px solid var(--rose-deep);border-radius:999px;
+  background:transparent;color:var(--rose-deep);font:600 1rem "Cormorant Garamond",serif;cursor:pointer;
+}
+.close:hover,.close:focus-visible{background:var(--rose-deep);color:#fff;outline:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01s!important;animation-delay:0s!important;transition-duration:.01s!important;transition-delay:0s!important}
+  .hearts{display:none}
+}
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+<div class="boom" id="boom" aria-hidden="true"></div>
+
+<main>
+  <h1 id="title"></h1>
+  <div class="scene">
+    <div class="envelope" id="env" tabindex="0" role="button" aria-label="Buka amplop surat">
+      <div class="back"></div>
+      <div class="letter"><b id="peek"></b></div>
+      <div class="pocket"></div>
+      <div class="flap in"></div>
+      <div class="flap out"></div>
+      <button class="seal" id="seal" aria-label="Buka segel">♥</button>
+    </div>
+  </div>
+  <p class="hint" id="hint">Ketuk segel untuk membuka surat</p>
+</main>
+
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="Isi surat">
+  <article class="paper" id="paper"></article>
+</div>
+
+<script>
+// ✏️ Ubah isi surat di sini
+const LETTER = {
+  title: "Love Letter",
+  to: "Sayangkuu Cintakuu🤍",
+  paragraphs: [
+    "Happy 1st Anniversary, Sayangkuu Cintakuu😙🫶🏼❤️",
+    "Gakerasa kita udah setaun bersama, Terima kasih sayangg sudah hadir dihidupku. Terima kasih karena selama satu tahun ini kamu udah memberikan begitu banyak warna, kebahagiaan, dan cerita yang ga akan pernah aku lupain. Terima kasih buat setiap waktu, setiap percakapan, setiap tawa, setiap perhatian kecil, dan bahkan setiap momen ketika kita hanya diam tapi tetap merasa nyaman satu sama lain.",
+    "Aku sadar, hubungan kita nggak cuma tentang hari-hari yang menyenangkan. Ada juga hari yang ketika kita mungkin merasa cape, berbeda pendapat, salah paham satu sama lain, atau menghadapi hal sulit. Tapi dari semua itu, aku belajar bahwa mencintai kamu bukan cuma tentang menikmati kebahagiaan bersama, tapi juga tentang bagaimana kita tetap memilih untuk saling memahami, memperbaiki diri, dan bertumbuh bersama.",
+    "Maaf sayangg aku belum jadi pasangan yang sempurna. Masih ada banyak hal yang perlu aku pelajari, masih ada sikap yang perlu aku perbaiki, dan masih ada banyak cara untuk membuatmu merasa lebih dicintai. Tapi satu hal yang ingin kamu tahu adalah bahwa aku selalu ingin berusaha menjadi seseorang yang lebih baik untuk kita.",
+    "Makasih sayangg buat taun pertama ini, terima kasih karena sudah menjadi bagian dari ceritaku. Terima kasih karena sudah memberikan kesempatan untuk kenal kamu lebih dekat. Terima kasih karena sudah menjadi seseorang yang begitu berarti bagiku.",
+    "Semoga kita selalu punya alasan untuk saling memilih, bukan hanya ketika semuanya terasa mudah, tetapi juga ketika kita perlu lebih banyak kesabaran dan pengertian.",
+    "Semoga kita bisa terus tumbuh bersama, tanpa kehilangan diri sendiri, tanpa berhenti menghargai satu sama lain, dan tanpa melupakan hal-hal sederhana yang membuat kita jatuh cinta sejak awal.",
+    "Aku bersyukur kita bisa sampai di hari ini. Dan aku berharap, perjalanan kita terus berlanjut hingga akhir hayat.",
+    "I love youuu sayangkuu cintakuu mwahhh😙🫶🏼❤️"
+  ],
+  from: "Partner Hidup"
+};
+
+const $ = id => document.getElementById(id);
+const env = $('env'), reader = $('reader'), hint = $('hint');
+let opened = false, reading = false;
+
+$('title').textContent = LETTER.title;
+$('peek').textContent = LETTER.to + ',';
+$('paper').innerHTML =
+  `<h2>${LETTER.to},</h2>` +
+  LETTER.paragraphs.map((t,i)=>`<p style="--i:${i}"></p>`).join('') +
+  `<p class="sign" style="--i:${LETTER.paragraphs.length}"></p>` +
+  `<button class="close" id="close">Lipat kembali</button>`;
+document.querySelectorAll('#paper p:not(.sign)').forEach((p,i)=>p.textContent = LETTER.paragraphs[i]);
+document.querySelector('.sign').textContent = LETTER.from;
+
+function openEnvelope(){
+  if(opened) return;
+  opened = true;
+  env.classList.add('open');
+  env.setAttribute('aria-label','Baca surat');
+  hint.style.opacity = 0;
+  setTimeout(()=>{
+    env.classList.add('ready');
+    hint.textContent = 'Ketuk surat untuk membacanya';
+    hint.style.opacity = 1;
+  }, 1700);
+}
+function explode(){
+  const boom = $('boom');
+  const r = env.querySelector('.letter').getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const colors = ['#ff5d8f','#ff8fab','#ffc2d1','#d98ca3','#ffffff','#c9304c'];
+  const add = (el)=>{ el.addEventListener('animationend', ()=>el.remove()); boom.appendChild(el); };
+  const place = (el)=>{ el.style.left = cx+'px'; el.style.top = cy+'px'; return el; };
+  const ring = place(document.createElement('i')); ring.className = 'ring'; add(ring);
+  const big = place(document.createElement('span')); big.className = 'bigheart'; big.textContent = '\u2665'; add(big);
+  const wave = (n)=>{
+    for(let i=0;i<n;i++){
+      const a = Math.random()*Math.PI*2, d = 90 + Math.random()*Math.min(innerWidth,700)*.45;
+      const el = place(document.createElement('span'));
+      el.className = 'bh'; el.textContent = '\u2665';
+      el.style.fontSize = (16 + Math.random()*30) + 'px';
+      el.style.color = colors[(Math.random()*colors.length)|0];
+      el.style.setProperty('--x', Math.cos(a)*d + 'px');
+      el.style.setProperty('--y', Math.sin(a)*d - 40 + 'px');
+      el.style.setProperty('--fall', (60 + Math.random()*120) + 'px');
+      el.style.setProperty('--r', (Math.random()*540 - 270) + 'deg');
+      el.style.setProperty('--t', (1.3 + Math.random()*.9) + 's');
+      add(el);
+    }
+  };
+  wave(36);
+  setTimeout(()=>wave(22), 220);
+}
+function readLetter(){
+  if(reading) return;
+  reading = true;
+  const show = ()=>{ reader.classList.add('show'); $('close').focus({preventScroll:true}); };
+  if(reduce){ show(); return; }
+  explode();
+  setTimeout(show, 450);
+}
+function closeLetter(){
+  reader.classList.remove('show');
+  setTimeout(()=>{
+    env.classList.remove('open','ready');
+    opened = false; reading = false;
+    hint.textContent = 'Ketuk segel untuk membuka surat';
+    env.setAttribute('aria-label','Buka amplop surat');
+    env.focus({preventScroll:true});
+  }, 450);
+}
+
+env.addEventListener('click', ()=> env.classList.contains('ready') ? readLetter() : openEnvelope());
+env.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); env.click(); }});
+$('seal').addEventListener('keydown', e=>e.stopPropagation());
+$('paper').addEventListener('click', e=>{ if(e.target.id==='close') closeLetter(); });
+reader.addEventListener('click', e=>{ if(e.target===reader) closeLetter(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && reader.classList.contains('show')) closeLetter(); });
+
+// Hati yang muncul lalu pecah (pop) di latar
+const box = $('hearts');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function popHeart(x,y,size,dur){
+  const h = document.createElement('span');
+  h.className = 'heart'; h.textContent = '♥';
+  h.style.left = x+'px'; h.style.top = y+'px';
+  h.style.fontSize = size+'px'; h.style.setProperty('--d', dur+'s');
+  h.addEventListener('animationend', ()=>h.remove());
+  box.appendChild(h);
+  setTimeout(()=>burst(x, y-48, size), dur*920);
+}
+function burst(x,y,size){
+  const n = 6;
+  for(let i=0;i<n;i++){
+    const a = (Math.PI*2/n)*i + Math.random()*.5, r = size*(1+Math.random()*.8);
+    const s = document.createElement('i'); s.className = 'spark';
+    s.style.left = x+'px'; s.style.top = y+'px';
+    s.style.setProperty('--x', Math.cos(a)*r+'px');
+    s.style.setProperty('--y', Math.sin(a)*r+'px');
+    s.addEventListener('animationend', ()=>s.remove());
+    box.appendChild(s);
+  }
+}
+function spawn(){
+  if(document.hidden || box.childElementCount>40) return;
+  popHeart(Math.random()*innerWidth, Math.random()*innerHeight, 14+Math.random()*22, 3+Math.random()*2);
+}
+if(!reduce){
+  for(let i=0;i<5;i++) setTimeout(spawn, i*350);
+  setInterval(spawn, 650);
+  document.addEventListener('pointerdown', e=>popHeart(e.clientX, e.clientY, 22, 1.6));
+}
+</script>
+</body>
+</html>
